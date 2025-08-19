@@ -1,6 +1,12 @@
-from flask import Flask
-import threading
+import os
 import time
+import threading
+import logging
+from flask import Flask
+
+# Disable Flask's default request logging (keeps console clean)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # Create Flask app
 app = Flask(__name__)
@@ -8,11 +14,11 @@ app = Flask(__name__)
 @app.route('/')
 def home():
     """Home route to keep the server alive"""
-    return "Discord bot is running! 🤖"
+    return "Discord bot is running on Render! 🤖"
 
 @app.route('/health')
 def health_check():
-    """Health check endpoint"""
+    """Health check endpoint (for UptimeRobot or monitoring)"""
     return {
         "status": "healthy",
         "message": "Discord bot keep-alive server is running",
@@ -26,20 +32,20 @@ def ping():
 
 def run():
     """Run the Flask server"""
-    # Run on all interfaces, port 5000 (Replit requirement)
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    port = int(os.environ.get("PORT", 5000))  # Render provides PORT
+    app.run(host="0.0.0.0", port=port, debug=False)
 
 def keep_alive():
     """Start the keep-alive server in a separate thread"""
     print("Starting keep-alive server...")
-    
+
     # Create and start the server thread
     server_thread = threading.Thread(target=run)
     server_thread.daemon = True  # Dies when main thread dies
     server_thread.start()
-    
-    print("Keep-alive server started on http://0.0.0.0:5000")
-    
+
+    print(f"Keep-alive server started on port {os.environ.get('PORT', 5000)}")
+
     # Give the server a moment to start
     time.sleep(1)
 

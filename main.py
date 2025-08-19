@@ -15,9 +15,6 @@ from config_loader import load_yuno_config, build_system_prompt, build_enhanced_
 # Load environment variables
 load_dotenv()
 
-# Start keep-alive server (non-blocking)
-keep_alive()
-
 # Load Yuno's configuration
 yuno_config = load_yuno_config()
 ai_settings = get_ai_settings(yuno_config)
